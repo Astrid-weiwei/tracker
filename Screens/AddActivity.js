@@ -23,24 +23,26 @@ export default function AddActivity({ navigation }) {
   const [open, setOpen] = useState(false);
 
   const handleSave = () => {
+    // Input validation
     if (!activityType || !duration || isNaN(duration) || duration <= 0) {
       Alert.alert('Invalid Input', 'Please enter valid activity details.');
       return;
     }
 
     const newActivity = {
+      id: Math.random().toString(), 
       type: activityType,
       duration: parseInt(duration),
       date: date.toDateString(),
       special: (activityType === 'Running' || activityType === 'Weights') && duration > 60,
     };
 
-    addActivity(newActivity);
-    navigation.goBack();
+    addActivity(newActivity); 
+    navigation.goBack(); 
   };
 
   const onDateChange = (event, selectedDate) => {
-    setShowDatePicker(false); // Close the picker after selecting
+    setShowDatePicker(false); 
     if (selectedDate) {
       setDate(selectedDate);
     }
@@ -80,7 +82,7 @@ export default function AddActivity({ navigation }) {
           style={styles.input}
           value={date.toDateString()}
           editable={false}
-          pointerEvents="none" // Prevents editing the text directly
+          pointerEvents="none"
         />
       </TouchableOpacity>
 

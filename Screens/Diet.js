@@ -1,36 +1,45 @@
 import React, { useContext } from 'react';
-import { View, Button, StyleSheet, FlatList, Text } from 'react-native';
+import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { DietContext } from '../context/DietContext';
+import { Ionicons } from '@expo/vector-icons';
+import commonStyles from '../context/styles';
 
-export default function Diet({ navigation }) {
-  const { dietEntries } = useContext(DietContext);
+export default function DietScreen() {
+  const { dietEntries } = useContext(DietContext); // Access diet entries from context
+  const { themeStyles } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: themeStyles.backgroundColor }]}>
       <FlatList
         data={dietEntries}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text>{item.description}</Text>
-            <Text>{item.date}</Text>
-            <Text>{item.calories} Calories</Text>
+          <View style={[styles.item, { backgroundColor: themeStyles.itemColor }]}>
+            <Text style={{ color: themeStyles.textColor }}>{item.name}</Text>
+            <Text style={{ color: themeStyles.textColor }}>{item.date}</Text>
+            <Text style={{ color: themeStyles.textColor }}>{item.value} cal</Text>
+            {item.special && (
+              <Ionicons name="warning" size={24} color="orange" style={{ marginLeft: 10 }} />
+            )}
           </View>
         )}
-      />
-      <Button
-        title="Add Diet Entry"
-        onPress={() => navigation.navigate('AddDietEntry')}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: '#dcd' },
+  container: {
+    flex: 1,
+    padding: commonStyles.padding,
+  },
   item: {
-    padding: 15,
-    backgroundColor: '#ddd',
+    padding: commonStyles.padding,
     marginVertical: 8,
+    borderRadius: commonStyles.borderRadius,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
