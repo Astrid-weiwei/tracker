@@ -1,40 +1,64 @@
-// App.js
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ActivitiesScreen from './Screens/ActivitiesScreen';
-import DietScreen from './Screens/DietScreen';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import Activities from './Screens/Activities';
+import Diet from './Screens/Diet';
+import AddActivity from './Screens/AddActivity';
+import Settings from './Screens/Settings';
+import { ActivitiesProvider } from './context/ActivitiesContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
-export default function App() {
+function ActivityStack() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            if (route.name === 'Activities') {
-              iconName = focused ? 'directions-run' : 'run-circle';
-              return <MaterialIcons name={iconName} size={size} color={color} />;
-            } else if (route.name === 'Diet') {
-              iconName = focused ? 'fastfood' : 'restaurant';
-              return <MaterialIcons name={iconName} size={size} color={color} />;
-            }
-          },
-          tabBarActiveTintColor: 'yellow',
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: { backgroundColor: '#4b2a82' },
-          headerStyle: { backgroundColor: '#4b2a82' },
-          headerTintColor: 'white',
-        })}
-      >
-        <Tab.Screen name="Activities" component={ActivitiesScreen} />
-        <Tab.Screen name="Diet" component={DietScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      {/* Use a unique name for the stack screen */}
+      <Stack.Screen name="ActivitiesScreen" component={Activities} />
+      <Stack.Screen name="AddActivity" component={AddActivity} />
+    </Stack.Navigator>
   );
 }
+
+function App() {
+  return (
+    <ActivitiesProvider>
+      <NavigationContainer>
+        <Tab.Navigator>
+          {/* Use a unique name for the tab */}
+          <Tab.Screen
+            name="ActivitiesTab"
+            component={ActivityStack}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="walk" color={color} size={size} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Diet"
+            component={Diet}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="fast-food" color={color} size={size} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="settings" color={color} size={size} />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </ActivitiesProvider>
+  );
+}
+
+export default App;
