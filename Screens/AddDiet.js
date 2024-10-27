@@ -1,120 +1,50 @@
-import React, { useState, useContext } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { DietContext } from '../context/DietContext';
+import React, { useContext, useState } from 'react';
+import { View, TextInput, Button, Alert } from 'react-native';
+import { DietContext } from '../contexts/DietContext';
 
-export default function AddDietEntry({ navigation }) {
-  const { addDietEntry } = useContext(DietContext); // Access context to add entries
-  const [description, setDescription] = useState('');
-  const [calories, setCalories] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+export default function AddDiet({ navigation }) {
+  const { addDietEntry } = useContext(DietContext);
+  const [diet, setDiet] = useState({
+    description: '',
+    calories: '',
+    date: new Date().toISOString().split('T')[0],  // Defaults to today's date
+    isSpecial: false
+  });
 
-  const handleSave = () => {
-    // Validate inputs
-    if (!description.trim() || !calories || isNaN(calories) || parseInt(calories) <= 0) {
-      Alert.alert('Invalid Input', 'Please provide valid details for the diet entry.');
+  const handleSave = async () => {
+    if (!diet.description || !diet.calories) {
+      Alert.alert("Error", "Please fill out all required fields.");
       return;
     }
 
-    const newEntry = {
-      id: Math.random().toString(), 
-      name: description.trim(),
-      value: parseInt(calories),
-      date: date.toDateString(),
-      special: parseInt(calories) > 800, 
-    };
-
-    addDietEntry(newEntry); 
-    navigation.goBack(); 
-  };
-
-  const onDateChange = (event, selectedDate) => {
-    setShowDatePicker(false); 
-    if (selectedDate) setDate(selectedDate); 
+    Alert.alert('Add Diet Entry', 'Are you sure you want to add this diet entry?', [
+      { text: 'No' },
+      { text: 'Yes', onPress: async () => {
+          await addDietEntry(diet);
+          navigation.goBack();
+      }},
+    ]);
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <Text style={styles.label}>Description *</Text>
+    <View>
       <TextInput
-        style={styles.input}
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Enter meal description"
+        placeholder="Description"
+        value={diet.description}
+        onChangeText={(text) => setDiet({ ...diet, description: text })}
       />
-
-      <Text style={styles.label}>Calories *</Text>
       <TextInput
-        style={styles.input}
+        placeholder="Calories"
         keyboardType="numeric"
-        value={calories}
-        onChangeText={setCalories}
-        placeholder="Enter calories"
+        value={diet.calories}
+        onChangeText={(text) => setDiet({ ...diet, calories: Number(text) })}
       />
-
-      <Text style={styles.label}>Date *</Text>
-      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-        <TextInput
-          style={styles.input}
-          value={date.toDateString()}
-          editable={false}
-          pointerEvents="none" // Prevent direct editing
-        />
-      </TouchableOpacity>
-
-      {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'inline' : 'default'}
-          onChange={onDateChange}
-        />
-      )}
-
-      <View style={styles.buttonContainer}>
-        <Button title="Cancel" onPress={() => navigation.goBack()} />
-        <Button title="Save" onPress={handleSave} />
-      </View>
-    </KeyboardAvoidingView>
+      <TextInput
+        placeholder="Date"
+        value={diet.date}
+        onChangeText={(text) => setDiet({ ...diet, date: text })}
+      />
+      <Button title="Save" onPress={handleSave} />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#e6e6fa',
-  },
-  label: {
-    marginBottom: 5,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-});

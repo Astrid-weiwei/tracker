@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import commonStyles from './styles';
+
 const ThemeContext = createContext();
 
 export const useTheme = () => useContext(ThemeContext);

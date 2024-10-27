@@ -2,50 +2,54 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Activities from './Screens/Activities';
+import Activities from './Screens/ActivitiesList';
 import AddActivity from './Screens/AddActivity';
-import Diet from './Screens/Diet';
-import AddDietEntry from './Screens/AddDiet'; 
+import Diet from './Screens/DietList';
+import AddDietEntry from './Screens/AddDiet';
 import Settings from './Screens/Settings';
-import { ActivitiesProvider } from './context/ActivitiesContext';
-import { DietProvider } from './context/DietContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { ActivitiesProvider } from './contexts/ActivitiesContext';
+import { DietProvider } from './contexts/DietContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
+import EditActivity from './Screens/EditActivity';
+import EditDietEntry from './Screens/EditDietEntry';
+import ActivitiesList from './Screens/ActivitiesList'; 
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
 
 function ActivityStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="ActivitiesScreen"
-        component={Activities}
+        component={ActivitiesList} 
         options={({ navigation }) => ({
           title: 'Activities',
           headerRight: () => (
-            <Button
-              onPress={() => navigation.navigate('AddActivity')}
-              title="Add"
-              color="#fff"
-            />
+            <View style={{ flexDirection: 'row', marginRight: 15 }}>
+              <Ionicons
+                name="add-circle-outline"
+                size={24}
+                color="#fff"
+                onPress={() => navigation.navigate('AddActivity')}
+                style={{ marginRight: 15 }}
+              />
+              <Ionicons
+                name="walk"
+                size={24}
+                color="#fff"
+                onPress={() => console.log('Navigate to Special Activities')}
+              />
+            </View>
           ),
           headerStyle: { backgroundColor: '#4c669f' },
           headerTintColor: '#fff',
-          headerRightContainerStyle: { marginRight: 15 },
         })}
       />
-      <Stack.Screen
-        name="AddActivity"
-        component={AddActivity}
-        options={{
-          title: 'Add Activity',
-          headerStyle: { backgroundColor: '#4c669f' },
-          headerTintColor: '#fff',
-        }}
-      />
+      <Stack.Screen name="AddActivity" component={AddActivity} />
+      <Stack.Screen name="EditActivity" component={EditActivity} />
     </Stack.Navigator>
   );
 }
@@ -60,26 +64,28 @@ function DietStack() {
         options={({ navigation }) => ({
           title: 'Diet',
           headerRight: () => (
-            <Button
-              onPress={() => navigation.navigate('AddDietEntry')}
-              title="Add"
-              color="#fff"
-            />
+            <View style={{ flexDirection: 'row', marginRight: 15 }}>
+              <Ionicons
+                name="add-circle-outline"
+                size={24}
+                color="#fff"
+                onPress={() => navigation.navigate('AddDietEntry')}
+                style={{ marginRight: 15 }}
+              />
+              <Ionicons
+                name="fast-food"
+                size={24}
+                color="#fff"
+                onPress={() => console.log('Navigate to Special Diet Entries')}
+              />
+            </View>
           ),
           headerStyle: { backgroundColor: '#4c669f' },
           headerTintColor: '#fff',
-          headerRightContainerStyle: { marginRight: 15 },
         })}
       />
-      <Stack.Screen
-        name="AddDietEntry"
-        component={AddDietEntry} 
-        options={{
-          title: 'Add Diet Entry',
-          headerStyle: { backgroundColor: '#4c669f' },
-          headerTintColor: '#fff',
-        }}
-      />
+      <Stack.Screen name="AddDietEntry" component={AddDietEntry} />
+      <Stack.Screen name="EditDietEntry" component={EditDietEntry} />
     </Stack.Navigator>
   );
 }
@@ -95,6 +101,7 @@ export default function App() {
                 name="ActivitiesTab"
                 component={ActivityStack}
                 options={{
+                  tabBarLabel: 'Activities',
                   tabBarIcon: ({ color, size }) => (
                     <Ionicons name="walk" color={color} size={size} />
                   ),
@@ -104,6 +111,7 @@ export default function App() {
                 name="DietTab"
                 component={DietStack}
                 options={{
+                  tabBarLabel: 'Diet',
                   tabBarIcon: ({ color, size }) => (
                     <Ionicons name="fast-food" color={color} size={size} />
                   ),

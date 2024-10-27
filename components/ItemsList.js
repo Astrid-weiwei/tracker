@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { FlatList, Text, View, StyleSheet } from 'react-native';
-import { useTheme } from '../context/ThemeContext'; 
+import { useTheme } from '../context/ThemeContext';
 
 const ItemsList = ({ data, type }) => {
-  const { isDarkTheme } = useTheme(); 
+  const { themeStyles } = useTheme(); // Access theme styles
 
   return (
     <FlatList
@@ -13,18 +14,23 @@ const ItemsList = ({ data, type }) => {
         <View
           style={[
             styles.item,
-            { backgroundColor: isDarkTheme ? '#444' : '#4c669f' }, // Apply theme
+            { backgroundColor: themeStyles.itemColor }, // Apply theme color
           ]}
         >
-          <Text style={[styles.text, { color: isDarkTheme ? '#fff' : '#000' }]}>
-            {item.name}
+          <Text style={[styles.text, { color: themeStyles.textColor }]}>
+            {item.name || item.type}
           </Text>
-          <Text style={[styles.text, { color: isDarkTheme ? '#fff' : '#000' }]}>
+          <Text style={[styles.text, { color: themeStyles.textColor }]}>
             {item.date}
           </Text>
-          <Text style={[styles.text, { color: isDarkTheme ? '#fff' : '#000' }]}>
-            {item.value} cal
+          <Text style={[styles.text, { color: themeStyles.textColor }]}>
+            {type === 'diet' ? `${item.value} cal` : `${item.duration} min`}
           </Text>
+          {item.special && (
+            <Text style={[styles.specialText, { color: 'orange' }]}>
+              ⚠️ Special
+            </Text>
+          )}
         </View>
       )}
     />
@@ -33,12 +39,20 @@ const ItemsList = ({ data, type }) => {
 
 const styles = StyleSheet.create({
   item: {
-    padding: 10,
-    marginVertical: 5,
+    padding: 15,
+    marginVertical: 8,
     borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   text: {
     fontSize: 16,
+  },
+  specialText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });
 
